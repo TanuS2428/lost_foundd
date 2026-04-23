@@ -1,0 +1,29 @@
+services:
+  # Backend Web Service
+  - type: web
+    name: campusfound-backend
+    env: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: PORT
+        value: 5000
+      - key: MONGO_URI
+        sync: false # You MUST add your MongoDB Atlas URL in the Render dashboard!
+      - key: JWT_SECRET
+        generateValue: true
+
+  # Frontend Static Site
+  - type: web
+    name: campusfound-frontend
+    env: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: campusfound-backend
+          envVarKey: RENDER_EXTERNAL_URL
